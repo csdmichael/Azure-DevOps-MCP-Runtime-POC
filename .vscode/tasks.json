@@ -4,7 +4,7 @@
 		{
 			"label": "npm-install-mcp",
 			"type": "shell",
-			"command": "cd azure-devops-mcp-server && npm install",
+			"command": "npm install",
 			"isBackground": false
 		}
 	]

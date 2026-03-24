@@ -2,7 +2,7 @@
 
 An MCP (Model Context Protocol) server that exposes Azure DevOps Work Item and Git Repository operations as tools for AI assistants like GitHub Copilot.
 
-Built from the [Azure DevOps OpenAPI Spec.yaml](../Azure%20DevOps%20OpenAPI%20Spec.yaml) and registered in Azure API Center as an MCP runtime.
+Built from the [Azure DevOps OpenAPI Spec.yaml](Azure%20DevOps%20OpenAPI%20Spec.yaml) and registered in Azure API Center as an MCP runtime.
 
 ## Tools
 
@@ -34,7 +34,6 @@ Built from the [Azure DevOps OpenAPI Spec.yaml](../Azure%20DevOps%20OpenAPI%20Sp
 ## Local Development
 
 ```bash
-cd azure-devops-mcp-server
 npm install
 
 # Set environment variables
@@ -72,7 +71,6 @@ az webapp config appsettings set \
 ### 2. Deploy
 
 ```bash
-cd azure-devops-mcp-server
 npm install
 az webapp up --name azure-devops-mcp-poc --resource-group ai-myaacoub --runtime "NODE:20-lts"
 ```
@@ -116,11 +114,11 @@ This MCP server is registered in Azure API Center (`api-center-myaacoub-ai`) as:
 - **Kind:** `mcp`
 - **Version:** `v1`
 - **Deployment runtime URI:** `https://azure-devops-mcp-poc.azurewebsites.net`
-- **OpenAPI spec:** [Azure DevOps OpenAPI Spec.yaml](../Azure%20DevOps%20OpenAPI%20Spec.yaml)
+- **OpenAPI spec:** [Azure DevOps OpenAPI Spec.yaml](Azure%20DevOps%20OpenAPI%20Spec.yaml)
 
 ## CI/CD
 
-A GitHub Actions workflow is included at `.github/workflows/deploy.yml`. It deploys automatically on push to `main` when files under `azure-devops-mcp-server/` change.
+A GitHub Actions workflow is included at `.github/workflows/deploy.yml`. It deploys automatically on push to `main` when `index.js`, `package.json`, or `package-lock.json` change.
 
 ### Required GitHub Secrets
 
@@ -146,3 +144,7 @@ Copy the JSON output and add it as a GitHub secret named `AZURE_CREDENTIALS`.
 | `/` | GET | Health check |
 | `/sse` | GET | SSE transport (VS Code connects here) |
 | `/messages` | POST | Message handler for SSE sessions |
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

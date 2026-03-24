@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: Azure DevOps Services (Focused MCP Toolset)
+  version: 1.0.0
+  description: >
+    Curated Azure DevOps Services REST APIs for MCP tools.
+    Scope: Work Items (create/get/WIQL) and Git Repositories (list).
+    Designed for API Center + MCP + Copilot.
+
+servers:
+  - url: https://dev.azure.com/{organization}
+    variables:
+      organization:
+        default: YOUR_ORG
+        description: Azure DevOps organization name (e.g. contoso)
+
+tags:
+  - name: WorkItems
+  - name: Repos
+
+security:
+  - basicAuth: []
+
+paths:
+  /{project}/_apis/wit/workitems/{type}:
+    post:
+      tags: [WorkItems]
+      operationId: createWorkItem
+      summary: Create a work item
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema: { type: string }
+        - name: type
+          in: path
+          required: true
+          schema: { type: string }
+          description: Bug, Task, User Story, etc.
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "7.2-preview.3"
+      requestBody:
+        required: true
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: "#/components/schemas/JsonPatchDocument"
+      responses:
+        "200":
+          description: Work item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkItem"
+
+  /{project}/_apis/wit/workitems/{id}:
+    get:
+      tags: [WorkItems]
+      operationId: getWorkItem
+      summary: Get a work item
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema: { type: string }
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "7.2"
+      responses:
+        "200":
+          description: Work item returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkItem"
+
+  /{project}/_apis/wit/wiql:
+    post:
+      tags: [WorkItems]
+      operationId: runWiqlQuery
+      summary: Run a WIQL query
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema: { type: string }
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "7.2"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WiqlRequest"
+      responses:
+        "200":
+          description: WIQL result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WiqlResult"
+
+  /{project}/_apis/git/repositories:
+    get:
+      tags: [Repos]
+      operationId: listRepositories
+      summary: List repositories in a project
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema: { type: string }
+        - name: api-version
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "7.2"
+      responses:
+        "200":
+          description: Repository list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepositoryList"
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: >
+        Azure DevOps PAT using Basic auth.
+        Username can be blank; password is the PAT.
+
+  schemas:
+    JsonPatchDocument:
+      type: array
+      items:
+        $ref: "#/components/schemas/JsonPatchOperation"
+
+    JsonPatchOperation:
+      type: object
+      required: [op, path]
+      properties:
+        op:
+          type: string
+          enum: [add, remove, replace, move, copy, test]
+        path:
+          type: string
+        value:
+          nullable: true
+
+    WiqlRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+
+    WiqlResult:
+      type: object
+      properties:
+        workItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkItemReference"
+
+    WorkItemReference:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+
+    WorkItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        fields:
+          type: object
+          additionalProperties: true
+        url:
+          type: string
+
+    RepositoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/Repository"
+
+    Repository:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        webUrl: { type: string }
+        defaultBranch: { type: string }
