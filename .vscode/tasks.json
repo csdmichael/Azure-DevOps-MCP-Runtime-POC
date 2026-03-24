@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "npm-install-mcp",
+			"type": "shell",
+			"command": "cd azure-devops-mcp-server && npm install",
+			"isBackground": false
+		}
+	]
+}
