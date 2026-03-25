@@ -44,7 +44,7 @@ export AZURE_DEVOPS_PAT="your-pat"
 npm start
 ```
 
-Verify at http://localhost:8080 — should return:
+Verify at https://azure-devops-mcp-poc.azurewebsites.net/ — should return:
 ```json
 {
   "name": "Azure DevOps Services (Focused MCP Toolset)",
